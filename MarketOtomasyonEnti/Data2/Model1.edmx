@@ -1,0 +1,596 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Model1.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Kategori">
+          <Key>
+            <PropertyRef Name="KategoriID" />
+          </Key>
+          <Property Name="KategoriID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="KategoriAd" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Satıs">
+          <Key>
+            <PropertyRef Name="SatısID" />
+          </Key>
+          <Property Name="SatısID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UrunAd" Type="nvarchar" MaxLength="50" />
+          <Property Name="UrunID" Type="int" Nullable="false" />
+          <Property Name="Adet" Type="int" />
+          <Property Name="Tutar" Type="decimal" Precision="7" Scale="2" Nullable="false" />
+          <Property Name="Tarih" Type="date" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Market.dbo.Stok' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Stok">
+          <Key>
+            <PropertyRef Name="UrunID" />
+            <PropertyRef Name="StokSayısı" />
+          </Key>
+          <Property Name="UrunID" Type="int" Nullable="false" />
+          <Property Name="UrunAd" Type="nvarchar" MaxLength="50" />
+          <Property Name="StokSayısı" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="Urunler">
+          <Key>
+            <PropertyRef Name="UrunID" />
+          </Key>
+          <Property Name="UrunID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UrunAd" Type="nvarchar" MaxLength="50" />
+          <Property Name="MarkaID" Type="nvarchar" MaxLength="50" />
+          <Property Name="AlışFiyat" Type="decimal" Precision="7" Scale="2" Nullable="false" />
+          <Property Name="SatışFiyat" Type="decimal" Precision="7" Scale="2" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Market.dbo.UrunMarka' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="UrunMarka">
+          <Key>
+            <PropertyRef Name="MarkaID" />
+            <PropertyRef Name="UrunID" />
+          </Key>
+          <Property Name="MarkaID" Type="int" Nullable="false" />
+          <Property Name="UrunID" Type="int" Nullable="false" />
+          <Property Name="MarkaAd" Type="nvarchar" MaxLength="50" />
+          <Property Name="UrunAd" Type="nvarchar" MaxLength="50" />
+          <Property Name="AlısFiyat" Type="decimal" Precision="7" Scale="2" />
+          <Property Name="SatısFiyat" Type="decimal" Precision="7" Scale="2" />
+          <Property Name="StokAdet" Type="int" />
+        </EntityType>
+        <Association Name="FK_Satıs_Urunler">
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="1" />
+          <End Role="Satıs" Type="Self.Satıs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Urunler">
+              <PropertyRef Name="UrunID" />
+            </Principal>
+            <Dependent Role="Satıs">
+              <PropertyRef Name="UrunID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Stok_Urunler">
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="1" />
+          <End Role="Stok" Type="Self.Stok" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Urunler">
+              <PropertyRef Name="UrunID" />
+            </Principal>
+            <Dependent Role="Stok">
+              <PropertyRef Name="UrunID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UrunMarka_Marka">
+          <End Role="Kategori" Type="Self.Kategori" Multiplicity="1" />
+          <End Role="UrunMarka" Type="Self.UrunMarka" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Kategori">
+              <PropertyRef Name="KategoriID" />
+            </Principal>
+            <Dependent Role="UrunMarka">
+              <PropertyRef Name="MarkaID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UrunMarka_Urunler">
+          <End Role="Urunler" Type="Self.Urunler" Multiplicity="1" />
+          <End Role="UrunMarka" Type="Self.UrunMarka" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Urunler">
+              <PropertyRef Name="UrunID" />
+            </Principal>
+            <Dependent Role="UrunMarka">
+              <PropertyRef Name="UrunID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
+        <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="version" Type="int" Mode="In" />
+          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+        </Function>
+        <Function Name="sp_anaekran" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_anaekran2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_anaekran3" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_anaekran4" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="sp_creatediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="version" Type="int" Mode="In" />
+          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+        </Function>
+        <Function Name="sp_dropdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_guncelle" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UrunID" Type="int" Mode="In" />
+          <Parameter Name="YeniAd" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_helpdiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_renamediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="sp_satıs" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UrunID" Type="int" Mode="In" />
+          <Parameter Name="Adet" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_satis" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UrunID" Type="int" Mode="In" />
+          <Parameter Name="Adet" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_sil" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UrunID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_sil2" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UrunID" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_StokGuncelle" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UrunID" Type="int" Mode="In" />
+          <Parameter Name="Adet" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <EntityContainer Name="Model1StoreContainer">
+          <EntitySet Name="Kategori" EntityType="Self.Kategori" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Satıs" EntityType="Self.Satıs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Urunler" EntityType="Self.Urunler" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Stok" EntityType="Self.Stok" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Stok].[UrunID] AS [UrunID], 
+    [Stok].[UrunAd] AS [UrunAd], 
+    [Stok].[StokSayısı] AS [StokSayısı]
+    FROM [dbo].[Stok] AS [Stok]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="UrunMarka" EntityType="Self.UrunMarka" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [UrunMarka].[MarkaID] AS [MarkaID], 
+    [UrunMarka].[UrunID] AS [UrunID], 
+    [UrunMarka].[MarkaAd] AS [MarkaAd], 
+    [UrunMarka].[UrunAd] AS [UrunAd], 
+    [UrunMarka].[AlısFiyat] AS [AlısFiyat], 
+    [UrunMarka].[SatısFiyat] AS [SatısFiyat], 
+    [UrunMarka].[StokAdet] AS [StokAdet]
+    FROM [dbo].[UrunMarka] AS [UrunMarka]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Satıs_Urunler" Association="Self.FK_Satıs_Urunler">
+            <End Role="Urunler" EntitySet="Urunler" />
+            <End Role="Satıs" EntitySet="Satıs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Stok_Urunler" Association="Self.FK_Stok_Urunler">
+            <End Role="Urunler" EntitySet="Urunler" />
+            <End Role="Stok" EntitySet="Stok" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UrunMarka_Marka" Association="Self.FK_UrunMarka_Marka">
+            <End Role="Kategori" EntitySet="Kategori" />
+            <End Role="UrunMarka" EntitySet="UrunMarka" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UrunMarka_Urunler" Association="Self.FK_UrunMarka_Urunler">
+            <End Role="Urunler" EntitySet="Urunler" />
+            <End Role="UrunMarka" EntitySet="UrunMarka" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="Model1" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="Model1Container1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Kategori" EntityType="Model1.Kategori" />
+          <EntitySet Name="Satıs" EntityType="Model1.Satıs" />
+          <EntitySet Name="sysdiagrams" EntityType="Model1.sysdiagrams" />
+          <EntitySet Name="Urunler" EntityType="Model1.Urunler" />
+          <EntitySet Name="Stok" EntityType="Model1.Stok" />
+          <EntitySet Name="UrunMarka" EntityType="Model1.UrunMarka" />
+          <AssociationSet Name="FK_UrunMarka_Marka" Association="Model1.FK_UrunMarka_Marka">
+            <End Role="Kategori" EntitySet="Kategori" />
+            <End Role="UrunMarka" EntitySet="UrunMarka" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Satıs_Urunler" Association="Model1.FK_Satıs_Urunler">
+            <End Role="Urunler" EntitySet="Urunler" />
+            <End Role="Satıs" EntitySet="Satıs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Stok_Urunler" Association="Model1.FK_Stok_Urunler">
+            <End Role="Urunler" EntitySet="Urunler" />
+            <End Role="Stok" EntitySet="Stok" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UrunMarka_Urunler" Association="Model1.FK_UrunMarka_Urunler">
+            <End Role="Urunler" EntitySet="Urunler" />
+            <End Role="UrunMarka" EntitySet="UrunMarka" />
+          </AssociationSet>
+          <FunctionImport Name="sp_alterdiagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="version" Mode="In" Type="Int32" />
+            <Parameter Name="definition" Mode="In" Type="Binary" />
+          </FunctionImport>
+          <FunctionImport Name="sp_anaekran" />
+          <FunctionImport Name="sp_anaekran2" />
+          <FunctionImport Name="sp_creatediagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="version" Mode="In" Type="Int32" />
+            <Parameter Name="definition" Mode="In" Type="Binary" />
+          </FunctionImport>
+          <FunctionImport Name="sp_dropdiagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_helpdiagramdefinition" ReturnType="Collection(Model1.sp_helpdiagramdefinition_Result)">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_helpdiagrams" ReturnType="Collection(Model1.sp_helpdiagrams_Result)">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_renamediagram">
+            <Parameter Name="diagramname" Mode="In" Type="String" />
+            <Parameter Name="owner_id" Mode="In" Type="Int32" />
+            <Parameter Name="new_diagramname" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="sp_satıs">
+            <Parameter Name="UrunID" Mode="In" Type="Int32" />
+            <Parameter Name="Adet" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_satis">
+            <Parameter Name="UrunID" Mode="In" Type="Int32" />
+            <Parameter Name="Adet" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_StokGuncelle">
+            <Parameter Name="UrunID" Mode="In" Type="Int32" />
+            <Parameter Name="Adet" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_upgraddiagrams" />
+          <FunctionImport Name="sp_anaekran3" ReturnType="Collection(Model1.sp_anaekran3_Result)" />
+          <FunctionImport Name="sp_anaekran4" ReturnType="Collection(Model1.sp_anaekran4_Result)" />
+          <FunctionImport Name="sp_sil">
+          <Parameter Name="UrunID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_sil2">
+          <Parameter Name="UrunID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="sp_guncelle">
+            <Parameter Name="UrunID" Mode="In" Type="Int32" />
+            <Parameter Name="YeniAd" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+        <EntityType Name="Kategori">
+          <Key>
+            <PropertyRef Name="KategoriID" />
+          </Key>
+          <Property Name="KategoriID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="KategoriAd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="UrunMarka" Relationship="Model1.FK_UrunMarka_Marka" FromRole="Kategori" ToRole="UrunMarka" />
+        </EntityType>
+        <EntityType Name="Satıs">
+          <Key>
+            <PropertyRef Name="SatısID" />
+          </Key>
+          <Property Name="SatısID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UrunAd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UrunID" Type="Int32" Nullable="false" />
+          <Property Name="Adet" Type="Int32" />
+          <Property Name="Tutar" Type="Decimal" Nullable="false" Precision="7" Scale="2" />
+          <Property Name="Tarih" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="Urunler" Relationship="Model1.FK_Satıs_Urunler" FromRole="Satıs" ToRole="Urunler" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="Urunler">
+          <Key>
+            <PropertyRef Name="UrunID" />
+          </Key>
+          <Property Name="UrunID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UrunAd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MarkaID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AlışFiyat" Type="Decimal" Nullable="false" Precision="7" Scale="2" />
+          <Property Name="SatışFiyat" Type="Decimal" Nullable="false" Precision="7" Scale="2" />
+          <NavigationProperty Name="Satıs" Relationship="Model1.FK_Satıs_Urunler" FromRole="Urunler" ToRole="Satıs" />
+          <NavigationProperty Name="Stok" Relationship="Model1.FK_Stok_Urunler" FromRole="Urunler" ToRole="Stok" />
+          <NavigationProperty Name="UrunMarka" Relationship="Model1.FK_UrunMarka_Urunler" FromRole="Urunler" ToRole="UrunMarka" />
+        </EntityType>
+        <EntityType Name="Stok">
+          <Key>
+            <PropertyRef Name="UrunID" />
+            <PropertyRef Name="StokSayısı" />
+          </Key>
+          <Property Name="UrunID" Type="Int32" Nullable="false" />
+          <Property Name="UrunAd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StokSayısı" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Urunler" Relationship="Model1.FK_Stok_Urunler" FromRole="Stok" ToRole="Urunler" />
+        </EntityType>
+        <EntityType Name="UrunMarka">
+          <Key>
+            <PropertyRef Name="MarkaID" />
+            <PropertyRef Name="UrunID" />
+          </Key>
+          <Property Name="MarkaID" Type="Int32" Nullable="false" />
+          <Property Name="UrunID" Type="Int32" Nullable="false" />
+          <Property Name="MarkaAd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="UrunAd" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="AlısFiyat" Type="Decimal" Precision="7" Scale="2" />
+          <Property Name="SatısFiyat" Type="Decimal" Precision="7" Scale="2" />
+          <Property Name="StokAdet" Type="Int32" />
+          <NavigationProperty Name="Kategori" Relationship="Model1.FK_UrunMarka_Marka" FromRole="UrunMarka" ToRole="Kategori" />
+          <NavigationProperty Name="Urunler" Relationship="Model1.FK_UrunMarka_Urunler" FromRole="UrunMarka" ToRole="Urunler" />
+        </EntityType>
+        <Association Name="FK_UrunMarka_Marka">
+          <End Type="Model1.Kategori" Role="Kategori" Multiplicity="1" />
+          <End Type="Model1.UrunMarka" Role="UrunMarka" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Kategori">
+              <PropertyRef Name="KategoriID" />
+            </Principal>
+            <Dependent Role="UrunMarka">
+              <PropertyRef Name="MarkaID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Satıs_Urunler">
+          <End Type="Model1.Urunler" Role="Urunler" Multiplicity="1" />
+          <End Type="Model1.Satıs" Role="Satıs" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Urunler">
+              <PropertyRef Name="UrunID" />
+            </Principal>
+            <Dependent Role="Satıs">
+              <PropertyRef Name="UrunID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Stok_Urunler">
+          <End Type="Model1.Urunler" Role="Urunler" Multiplicity="1" />
+          <End Type="Model1.Stok" Role="Stok" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Urunler">
+              <PropertyRef Name="UrunID" />
+            </Principal>
+            <Dependent Role="Stok">
+              <PropertyRef Name="UrunID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UrunMarka_Urunler">
+          <End Type="Model1.Urunler" Role="Urunler" Multiplicity="1" />
+          <End Type="Model1.UrunMarka" Role="UrunMarka" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Urunler">
+              <PropertyRef Name="UrunID" />
+            </Principal>
+            <Dependent Role="UrunMarka">
+              <PropertyRef Name="UrunID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="sp_helpdiagramdefinition_Result">
+          <Property Type="Int32" Name="version" Nullable="true" />
+          <Property Type="Binary" Name="definition" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="sp_helpdiagrams_Result">
+          <Property Type="String" Name="Database" Nullable="true" MaxLength="128" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="128" />
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
+          <Property Type="Int32" Name="OwnerID" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="sp_anaekran3_Result">
+          <Property Type="Int32" Name="UrunID" Nullable="false" />
+          <Property Type="Int32" Name="KategoriID" Nullable="true" />
+          <Property Type="String" Name="UrunAd" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="AlışFiyat" Nullable="false" Precision="7" Scale="2" />
+          <Property Type="Decimal" Name="SatışFiyat" Nullable="false" Precision="7" Scale="2" />
+          <Property Type="String" Name="StokSayısı" Nullable="true" MaxLength="50" />
+        </ComplexType>
+        <ComplexType Name="sp_anaekran4_Result">
+          <Property Type="Int32" Name="UrunID" Nullable="false" />
+          <Property Type="String" Name="KategoriAd" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="UrunAd" Nullable="true" MaxLength="50" />
+          <Property Type="Decimal" Name="AlışFiyat" Nullable="false" Precision="7" Scale="2" />
+          <Property Type="Decimal" Name="SatışFiyat" Nullable="false" Precision="7" Scale="2" />
+          <Property Type="String" Name="StokSayısı" Nullable="true" MaxLength="50" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs" Space="C-S">
+        <Alias Key="Model" Value="Model1" />
+        <Alias Key="Target" Value="Model1.Store" />
+        <EntityContainerMapping CdmEntityContainer="Model1Container1" StorageEntityContainer="Model1StoreContainer">
+          <EntitySetMapping Name="Kategori">
+            <EntityTypeMapping TypeName="Model1.Kategori">
+              <MappingFragment StoreEntitySet="Kategori">
+                <ScalarProperty Name="KategoriAd" ColumnName="KategoriAd" />
+                <ScalarProperty Name="KategoriID" ColumnName="KategoriID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Satıs">
+            <EntityTypeMapping TypeName="Model1.Satıs">
+              <MappingFragment StoreEntitySet="Satıs">
+                <ScalarProperty Name="Tarih" ColumnName="Tarih" />
+                <ScalarProperty Name="Tutar" ColumnName="Tutar" />
+                <ScalarProperty Name="Adet" ColumnName="Adet" />
+                <ScalarProperty Name="UrunID" ColumnName="UrunID" />
+                <ScalarProperty Name="UrunAd" ColumnName="UrunAd" />
+                <ScalarProperty Name="SatısID" ColumnName="SatısID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="Model1.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Urunler">
+            <EntityTypeMapping TypeName="Model1.Urunler">
+              <MappingFragment StoreEntitySet="Urunler">
+                <ScalarProperty Name="SatışFiyat" ColumnName="SatışFiyat" />
+                <ScalarProperty Name="AlışFiyat" ColumnName="AlışFiyat" />
+                <ScalarProperty Name="MarkaID" ColumnName="MarkaID" />
+                <ScalarProperty Name="UrunAd" ColumnName="UrunAd" />
+                <ScalarProperty Name="UrunID" ColumnName="UrunID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Stok">
+            <EntityTypeMapping TypeName="Model1.Stok">
+              <MappingFragment StoreEntitySet="Stok">
+                <ScalarProperty Name="StokSayısı" ColumnName="StokSayısı" />
+                <ScalarProperty Name="UrunAd" ColumnName="UrunAd" />
+                <ScalarProperty Name="UrunID" ColumnName="UrunID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UrunMarka">
+            <EntityTypeMapping TypeName="Model1.UrunMarka">
+              <MappingFragment StoreEntitySet="UrunMarka">
+                <ScalarProperty Name="StokAdet" ColumnName="StokAdet" />
+                <ScalarProperty Name="SatısFiyat" ColumnName="SatısFiyat" />
+                <ScalarProperty Name="AlısFiyat" ColumnName="AlısFiyat" />
+                <ScalarProperty Name="UrunAd" ColumnName="UrunAd" />
+                <ScalarProperty Name="MarkaAd" ColumnName="MarkaAd" />
+                <ScalarProperty Name="UrunID" ColumnName="UrunID" />
+                <ScalarProperty Name="MarkaID" ColumnName="MarkaID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="Model1.Store.sp_alterdiagram" />
+          <FunctionImportMapping FunctionImportName="sp_anaekran" FunctionName="Model1.Store.sp_anaekran" />
+          <FunctionImportMapping FunctionImportName="sp_anaekran2" FunctionName="Model1.Store.sp_anaekran2" />
+          <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="Model1.Store.sp_creatediagram" />
+          <FunctionImportMapping FunctionImportName="sp_dropdiagram" FunctionName="Model1.Store.sp_dropdiagram" />
+          <FunctionImportMapping FunctionImportName="sp_helpdiagramdefinition" FunctionName="Model1.Store.sp_helpdiagramdefinition">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Model1.sp_helpdiagramdefinition_Result">
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_helpdiagrams" FunctionName="Model1.Store.sp_helpdiagrams">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Model1.sp_helpdiagrams_Result">
+                <ScalarProperty Name="Database" ColumnName="Database" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Owner" ColumnName="Owner" />
+                <ScalarProperty Name="OwnerID" ColumnName="OwnerID" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="Model1.Store.sp_renamediagram" />
+          <FunctionImportMapping FunctionImportName="sp_satıs" FunctionName="Model1.Store.sp_satıs" />
+          <FunctionImportMapping FunctionImportName="sp_satis" FunctionName="Model1.Store.sp_satis" />
+          <FunctionImportMapping FunctionImportName="sp_StokGuncelle" FunctionName="Model1.Store.sp_StokGuncelle" />
+          <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="Model1.Store.sp_upgraddiagrams" />
+          <FunctionImportMapping FunctionImportName="sp_anaekran3" FunctionName="Model1.Store.sp_anaekran3">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Model1.sp_anaekran3_Result">
+                <ScalarProperty Name="UrunID" ColumnName="UrunID" />
+                <ScalarProperty Name="KategoriID" ColumnName="KategoriID" />
+                <ScalarProperty Name="UrunAd" ColumnName="UrunAd" />
+                <ScalarProperty Name="AlışFiyat" ColumnName="AlışFiyat" />
+                <ScalarProperty Name="SatışFiyat" ColumnName="SatışFiyat" />
+                <ScalarProperty Name="StokSayısı" ColumnName="StokSayısı" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_anaekran4" FunctionName="Model1.Store.sp_anaekran4">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="Model1.sp_anaekran4_Result">
+                <ScalarProperty Name="UrunID" ColumnName="UrunID" />
+                <ScalarProperty Name="KategoriAd" ColumnName="KategoriAd" />
+                <ScalarProperty Name="UrunAd" ColumnName="UrunAd" />
+                <ScalarProperty Name="AlışFiyat" ColumnName="AlışFiyat" />
+                <ScalarProperty Name="SatışFiyat" ColumnName="SatışFiyat" />
+                <ScalarProperty Name="StokSayısı" ColumnName="StokSayısı" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="sp_sil" FunctionName="Model1.Store.sp_sil" />
+          <FunctionImportMapping FunctionImportName="sp_sil2" FunctionName="Model1.Store.sp_sil2" />
+          <FunctionImportMapping FunctionImportName="sp_guncelle" FunctionName="Model1.Store.sp_guncelle" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
